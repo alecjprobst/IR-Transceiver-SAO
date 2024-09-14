@@ -20,7 +20,7 @@ void setup()
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, LOW);
   //mySerial.begin(9600);
-  //mySerial.println("Attiny85 IR");
+  //mySerial.println("Attiny85 IR");f:\Folders\Documents\Arduino\libraries\IRremote\examples\TinyReceiver\TinyReceiver.ino
 }
 
 void loop() {
@@ -28,9 +28,10 @@ void loop() {
   if (TinyReceiverDecode()) 
   {
     // NEC protocol has 16 bit address, 16 bit Command. Command is made up of 8 bit data, 8 bit inverted data (for polarity check)
-    uint16_t Recieved_Address = TinyIRReceiverData.Address;
+    uint16_t Recieved_Address_Polarity = TinyIRReceiverData.Address;
+    uint16_t Recieved_Address = Recieved_Address_Polarity & 0xFF; // Removed upper bits to get non-inverted value
     uint16_t Recieved_Command = TinyIRReceiverData.Command;
-    uint8_t Recieved_Data = Recieved_Command >> 8; // Bit Shift last 8 bits to get non-inversed data from Command
+    uint8_t Recieved_Data = Recieved_Command & 0xFF; // Removed upper bits to get non-inverted value
 
     // Check if recieved data is correct. If True, will turn pin 6 (PB1) high or send Serial Data througn pin
     if(Recieved_Address == 0 and Recieved_Data == 69)
