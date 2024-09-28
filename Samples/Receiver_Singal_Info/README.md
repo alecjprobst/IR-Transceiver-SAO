@@ -1,4 +1,4 @@
-# Receiver_Singal_Info
+# Receiver_Signal_Info
 
 This sample is not really practical. 
 
