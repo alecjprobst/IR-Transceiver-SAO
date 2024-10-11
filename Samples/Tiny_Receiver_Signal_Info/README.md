@@ -1,7 +1,7 @@
-#Tiny_Receiver_Signal_Info
+# Tiny_Receiver_Signal_Info
 
-Sample provides information about a sent IR signal. 
-Using TinyIRReceiver to save space on the VERY limited available resources of the ATTiny85. 
+Sample provides information about a sent IR signal.  
+Using TinyIRReceiver to save space on the VERY limited available resources of the ATTiny85.  
 
 By default expected a NEC Protocol signal however, can be programmed to expect FAST or ONKYO signal. 
 
