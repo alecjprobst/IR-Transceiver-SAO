@@ -9,4 +9,4 @@
 
 // None Used LED Pin.
 // Was used for intial testing.
-#define LED_PIN PIN_PB1
+#define LED_PIN PIN_PB2

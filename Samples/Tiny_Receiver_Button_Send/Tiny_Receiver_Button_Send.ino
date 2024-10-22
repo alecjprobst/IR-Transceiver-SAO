@@ -1,7 +1,5 @@
 #include "PinDefinitionsAndMore.h"
-
 #include "MessageProtocol.h"
-
 #include <ATtinySerialOut.hpp>
 
 const byte START_BYTE = 0xAA;

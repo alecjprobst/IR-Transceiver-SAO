@@ -1,5 +1,4 @@
 // System Definitions
-#define F_CPU 8000000
 #include "PinDefinitionsAndMore.h"
 
 // IR Definitions
@@ -20,10 +19,11 @@ void setup()
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, LOW);
   //mySerial.begin(9600);
-  //mySerial.println("Attiny85 IR");f:\Folders\Documents\Arduino\libraries\IRremote\examples\TinyReceiver\TinyReceiver.ino
+  //mySerial.println("Attiny85 IR");
 }
 
 void loop() {
+  
   // Loop where we check to see if we recieved any data
   if (TinyReceiverDecode()) 
   {
@@ -42,8 +42,8 @@ void loop() {
   }
 
   // Send Data out
-  uint16_t Sending_Address = 0;
-  uint8_t Sending_Data = 69;
+  uint16_t Sending_Address = 2;
+  uint8_t Sending_Data = 78;
   uint8_t Sending_Repeats = 0;
   uint16_t Sending_Command = Generate_Command(Sending_Data);
   sendNEC(IR_SEND_PIN, Sending_Address, Sending_Command, Sending_Repeats);
