@@ -28,23 +28,28 @@ void loop()
 {
 }
 
+// I2C switch statement to determine what the ATTINY85 should do based on commands
 void receiveEvent(uint8_t howMany) 
 {
+    // Check for size of data coming from I2C
     uint8_t receivedDataSize = TinyWireS.available();
     if(receivedDataSize > 1)
     {
-        // First byte is always a command byte
+        // Assumes that first byte is always a command byte
         uint8_t command = receive_i2c_data();
         switch(command)
         {
-            case i2c_set_mode:
+            // Sets the send/receive mode of the IR system
+            case set_ir_mode:
                 uint8_t new_mode = receive_i2c_data();
                 if(new_mode <= max_mode_value)
                 {
                     mode = new_mode;
                 }
+                //TODO: Maybe send an error code or something?
                 break;
-            case i2c_enable_buffer:
+            // Enables or disables the ability to buffer IR data on the ATTINY85. Note: clears the receive buffer when this is changed
+            case enable_ir_buffer:
                 uint8_t new_enable_buffer = receive_i2c_data();
                 if(new_enable_buffer == 0)
                     enable_buffer = false;
@@ -54,19 +59,24 @@ void receiveEvent(uint8_t howMany)
                     break;
                 clear_receive_buffer();
                 break;
-            case i2c_set_address:
+            // Sets the IR address of this ATTINY85
+            case set_ir_address:
                 address_of_this_sao = receive_i2c_data();
                 break;
-            case i2c_get_address:
+            // Send the IR address of this ATTINY85 over I2C
+            case get_ir_address:
                 send_i2c_data(address_of_this_sao);
                 break;
-            case i2c_clear_receive_buffer:
+            // Clear the IR Receive Buffer
+            case clear_ir_receive_buffer:
                 clear_receive_buffer();
                 break;
-            case i2c_get_receive_buffer_avaliable:
+            // Get the number of bytes in the IR Receive Buffer
+            case get_ir_receive_buffer_avaliable:
                 send_i2c_data(number_bytes_in_receive_buffer);
                 break;
-            case i2c_read_byte:
+            // Send a byte from the IR Buffer. Bytes come in FIFO ordering. Buffer is left shifted with zeros
+            case read_ir_byte:
                 if(number_bytes_in_receive_buffer > 0)
                 {
                     send_i2c_data(receive_buffer[0]);
@@ -74,7 +84,8 @@ void receiveEvent(uint8_t howMany)
                 }
                 //TODO: Maybe send an error code or something?
                 break;
-            case i2c_write_byte:
+            // Send a byte out over IR. The specific address sent over is determined by the mode
+            case write_ir_byte:
                 uint8_t data_byte = receive_i2c_data();
                 if(mode == mode_public)
                 {
@@ -86,11 +97,13 @@ void receiveEvent(uint8_t howMany)
                 }
                 break;
             default:
+                //TODO: Maybe send an error code or something?
                 break;
         }
     }
 }
 
+// Clears the entire receive buffer and resets the number of bytes variable to zero
 void clear_receive_buffer()
 {
     for(int i=0; i < receive_buffer_size; i++)
@@ -100,6 +113,7 @@ void clear_receive_buffer()
     number_bytes_in_receive_buffer = 0;
 }
 
+// Shifts all values in the receive buffer to the left by one position. Zeros out the last position moved in the buffer
 void left_shift_receive_buffer()
 {
     if(number_bytes_in_receive_buffer > 0)
@@ -113,11 +127,13 @@ void left_shift_receive_buffer()
     }
 }
 
+// Generic function to send i2c data
 void send_i2c_data(uint8_t data)
 {
     TinyWireS.send(data);
 }
 
+// Generic function to receive i2c data
 uint8_t receive_i2c_data()
 {
     return TinyWireS.receive();

@@ -14,16 +14,17 @@
 #define LED_PIN PIN_PB2
 
 // I2C Command Definitions
-#define i2c_set_mode 0
-#define i2c_enable_buffer 1
-#define i2c_set_address 2
-#define i2c_get_address 3
-#define i2c_clear_receive_buffer 4
-#define i2c_get_receive_buffer_avaliable 5
-#define i2c_read_byte 6
-#define i2c_write_byte 7
+#define set_ir_mode 0
+#define enable_ir_buffer 1
+#define set_ir_address 2
+#define get_ir_address 3
+#define clear_ir_receive_buffer 4
+#define get_ir_receive_buffer_avaliable 5
+#define read_ir_byte 6
+#define write_ir_byte 7
 
 // Mode Definitions
+#define ir_public_address 0
 #define mode_public 0
 #define mode_address 1
 #define max_mode_value mode_address
