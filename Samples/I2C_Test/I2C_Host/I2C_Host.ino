@@ -4,7 +4,7 @@
 void setup() 
 {
     Wire.begin();                // join i2c bus as master
-    Wire.onRequest(requestEvent); // register event
+    Wire.onReceive(recieveEvent); // register event
     pinMode(8, OUTPUT);   // Setup LED pin
     Serial.begin(9600);
     Serial.print("Starting Transmission:\n");
@@ -19,7 +19,7 @@ void loop()
 {
 }
 
-void requestEvent() 
+void recieveEvent(int count) 
 {
     Serial.print("Recieved: ");         // print the character
     while(Wire.available() > 0) // loop through all bytes
