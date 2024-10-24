@@ -125,7 +125,7 @@ void receiveEvent(uint8_t howMany)
                 send_i2c_data(address_of_this_sao);
                 break;
             }
-            // Clear the IR Receive Buffer
+            // Clears the IR Receive Buffer
             case clear_ir_receive_buffer:
             {
                 clear_receive_buffer();
@@ -148,18 +148,12 @@ void receiveEvent(uint8_t howMany)
                 //TODO: Maybe send an error code or something?
                 break;
             }
-            // Send a byte out over IR. The specific address sent over is determined by the mode
+            // Send a byte out over IR. The first received 
             case write_ir_byte:
             {
+                uint8_t address_byte = receive_i2c_data();
                 uint8_t data_byte = receive_i2c_data();
-                if(mode == mode_public)
-                {
-                    sendNEC(IR_SEND_PIN, ir_public_address, data_byte);
-                }
-                else if(mode == mode_address)
-                {
-                    sendNEC(IR_SEND_PIN, address_of_this_sao, data_byte);
-                }
+                sendNEC(IR_SEND_PIN, address_byte, data_byte);
                 break;
             }
             default:
