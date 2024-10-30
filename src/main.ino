@@ -155,7 +155,7 @@ void receiveEvent(int howMany)
     if(receivedDataSize > 1)
     {
         // Assumes that first byte is always a command byte
-        uint8_t latest_i2c_received_command = receive_i2c_data();
+        latest_i2c_received_command = receive_i2c_data();
 
         switch(latest_i2c_received_command)
         {
