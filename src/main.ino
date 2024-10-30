@@ -148,7 +148,7 @@ void receiveEvent(uint8_t howMany)
                 //TODO: Maybe send an error code or something?
                 break;
             }
-            // Send a byte out over IR. The first received 
+            // Send a byte out over IR. The first received i2c byte is the address and the second is the data
             case write_ir_byte:
             {
                 uint8_t address_byte = receive_i2c_data();
