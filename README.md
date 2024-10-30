@@ -1,7 +1,9 @@
 # IR-Transceiver-SAO
 
-Event badges get lonely too. Why not have them chat with each other?  
-A Programmable Infrared Multitool SAO. Gives a basic I2C interface to control and request or send data on IR. Takes care of basic functions such as transmission protocol, processing incoming transmission, and address checking 
+Event badges get lonely too. Why not have them chat with each other?    
+
+A Programmable Infrared Multitool SAO. Gives a basic I2C interface to control and request or send data on IR.  
+Takes care of basic functions such as transmission protocol, processing incoming transmission, and address checking.
 
 # PCB Build Instructions
 - PCB Build instructions and component data can be found at the [hackaday project site](https://hackaday.io/project/197812-infrared-communication-sao) <br/>
@@ -17,9 +19,10 @@ A Programmable Infrared Multitool SAO. Gives a basic I2C interface to control an
 
 # SAO Definitions
 - Mode Definitions
-> - Public: The IR SAO ignores the address of incoming IR transmissions. Will save any transmissions sent to it
-> - Address: The IR SAO will check the address of incoming IR transmissions. Will only save transmission with address that match it's IR address
->> - IR Address: The 0-255 value address for IR communications. Note that this is not the same as the I2C Address!
+  - Public: The IR SAO ignores the address of incoming IR transmissions. Will save any transmissions sent to it
+  - Address: The IR SAO will check the address of incoming IR transmissions. Will only save transmission with address that match it's IR address
+    - IR Address: The 0-255 value address for IR communications.
+    - Note: This is not the same as the I2C Address!
 
 # I2C Communication Format
 The IR SAO default I2C Address is 0x08. <br/>
