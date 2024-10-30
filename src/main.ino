@@ -6,7 +6,8 @@
 #include "TinyIRSender.hpp"
 
 // I2C Definitions
-#include <TinyWireS.h>
+#include <Wire.h>
+#include <Arduino.h>
 
 // Program Variables
 uint8_t mode = 0;
@@ -21,8 +22,8 @@ void setup()
     // Clear buffer to make sure we don't have bad data
     clear_receive_buffer();
     // Begin I2C transactions
-    TinyWireS.begin(0x08);
-    TinyWireS.onReceive(receiveEvent);
+    Wire.begin(0x08);
+    Wire.onReceive(receiveEvent);
     // IR_RECEIVE_PIN in PinDefinitionsAndMore.h automatically overrides default reciever pin
     initPCIInterruptForTinyReceiver();    // Enables the interrupt generation on change of IR input signal
 }
@@ -79,10 +80,10 @@ uint8_t get_received_ir_address()
 }
 
 // I2C switch statement to determine what the ATTINY85 should do based on commands
-void receiveEvent(uint8_t howMany) 
+void receiveEvent(int howMany) 
 {
     // Check for size of data coming from I2C
-    uint8_t receivedDataSize = TinyWireS.available();
+    uint8_t receivedDataSize = Wire.available();
     if(receivedDataSize > 1)
     {
         // Assumes that first byte is always a command byte
@@ -192,11 +193,11 @@ void left_shift_receive_buffer()
 // Generic function to send i2c data
 void send_i2c_data(uint8_t data)
 {
-    TinyWireS.send(data);
+    Wire.write(data);
 }
 
 // Generic function to receive i2c data
 uint8_t receive_i2c_data()
 {
-    return TinyWireS.receive();
+    return Wire.read();
 }

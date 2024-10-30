@@ -16,10 +16,9 @@ void setup()
 
 void loop() 
 {
-    // Send character as command to slave
-    Serial.print("\nSending Letter to Slave\n");
+    Serial.print("\nSending Command H to Slave\n");
     Wire.beginTransmission(0x08);
-    Wire.write("J");
+    Wire.write("H");
     Wire.endTransmission();
 
     // Request 1 byte based on command
@@ -32,7 +31,22 @@ void loop()
         Serial.print(c);         // print the character
     }
 
-    delay(500);
+    Serial.print("\nSending Command J and data e to Slave\n");
+    Wire.beginTransmission(0x08);
+    Wire.write("Je");
+    Wire.endTransmission();
+
+    // Request 1 byte based on command
+    Serial.print("\nRequesting 1 byte from Slave\n");
+    Wire.requestFrom(8, 1);    // request 4 bytes from peripheral device #8
+
+    while (Wire.available()) 
+    {   // peripheral may send less than requested
+        char c = Wire.read(); // receive a byte as character
+        Serial.print(c);         // print the character
+    }
+
+    delay(1000);
 }
 
 /*
