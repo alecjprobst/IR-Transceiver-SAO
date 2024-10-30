@@ -1,5 +1,3 @@
-#define F_CPU 8000000
-
 // IR Definitions
 #define IR_RECEIVE_PIN PIN_PB3
 #define IR_SEND_PIN PIN_PB4
@@ -15,14 +13,15 @@
 
 // I2C Command Definitions
 #define ping 0
-#define set_ir_mode 1
-#define enable_ir_buffer 2
-#define set_ir_address 3
-#define get_ir_address 4
-#define clear_ir_receive_buffer 5
-#define get_ir_receive_buffer_avaliable 6
-#define read_ir_byte 7
-#define write_ir_byte 8
+#define set_ignore_ir_reflection 1
+#define set_ir_mode 2
+#define enable_ir_buffer 3
+#define set_ir_address 4
+#define get_ir_address 5
+#define clear_ir_receive_buffer 6
+#define get_ir_receive_buffer_avaliable 7
+#define read_ir_byte 8
+#define write_ir_byte 9
 
 // Mode Definitions
 #define ir_public_address 0
