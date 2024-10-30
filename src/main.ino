@@ -17,6 +17,9 @@ const uint8_t receive_buffer_size = 255;
 uint8_t receive_buffer[receive_buffer_size];
 uint8_t number_bytes_in_receive_buffer = 0;
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+// Main Loop
+//////////////////////////////////////////////////////////////////////////////////////////////////////
 void setup()
 {
     // Clear buffer to make sure we don't have bad data
@@ -28,7 +31,11 @@ void setup()
     initPCIInterruptForTinyReceiver();    // Enables the interrupt generation on change of IR input signal
 }
 
-// Check for received IR signals
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+// Main Loop
+//
+// Primary IR Event Handler - Check for received IR signals
+//////////////////////////////////////////////////////////////////////////////////////////////////////
 void loop() 
 {
     // Loop where we check to see if we recieved any data
@@ -90,6 +97,13 @@ void receiveEvent(int howMany)
         uint8_t command = receive_i2c_data();
         switch(command)
         {
+            // Debug command to sanity check
+            case ping:
+            {
+                Wire.write("pong");
+                break;
+            }
+
             // Sets the send/receive mode of the IR system
             case set_ir_mode:
             {
@@ -159,7 +173,7 @@ void receiveEvent(int howMany)
             }
             default:
             {
-                //TODO: Maybe send an error code or something?
+                // TODO: default error
                 break;
             }
         }
