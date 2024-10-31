@@ -24,6 +24,8 @@ uint8_t address_of_this_sao = 0;
 
 const uint8_t receive_buffer_size = 255;
 uint8_t receive_buffer[receive_buffer_size];
+uint8_t write_cache_address = 0;
+uint8_t write_cache = 0;
 uint8_t number_bytes_in_receive_buffer = 0;
 uint8_t latest_i2c_received_command = 0;
 
@@ -32,6 +34,8 @@ uint8_t latest_i2c_received_command = 0;
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 void setup()
 {
+    pinMode(BUTTON_PIN_1, INPUT_PULLUP);  
+
     // Clear buffer to make sure we don't have bad data
     clear_receive_buffer();
     // Begin I2C transactions
@@ -79,6 +83,14 @@ void loop()
         {
             receive_buffer[0] = ir_data;
             number_bytes_in_receive_buffer = 1;
+        }
+    }
+
+    if (digitalRead(BUTTON_PIN_1) == LOW) {
+        sendNEC(IR_SEND_PIN, write_cache_address, write_cache);
+        
+        while (digitalRead(BUTTON_PIN_1) == LOW) {
+            delay(50);  // Debouncing delay
         }
     }
 }
@@ -139,6 +151,13 @@ void requestEvent()
             break;
         }
 
+        case get_ir_write_cache:
+        {
+            send_i2c_data(write_cache_address);
+            send_i2c_data(write_cache);
+            break;
+        }
+
         default:
         {
             // TODO: default error
@@ -152,7 +171,7 @@ void receiveEvent(int howMany)
 {
     // Check for size of data coming from I2C
     uint8_t receivedDataSize = Wire.available();
-    if(receivedDataSize > 1)
+    if(receivedDataSize > 0)
     {
         // Assumes that first byte is always a command byte
         latest_i2c_received_command = receive_i2c_data();
@@ -254,6 +273,19 @@ void receiveEvent(int howMany)
                 // Send the data out over IR
                 sendNEC(IR_SEND_PIN, address_byte, data_byte);
 
+                break;
+            }
+
+            case set_ir_write_cache:
+            {
+                write_cache_address = receive_i2c_data();
+                write_cache = receive_i2c_data();
+                break;
+            }
+
+            case get_ir_write_cache:
+            {
+                // Do nothing here as data will be sent out in requestEvent()
                 break;
             }
 
