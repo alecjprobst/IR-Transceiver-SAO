@@ -1,5 +1,5 @@
 // System Definitions
-#define F_CPU 8000000
+#include <Arduino.h>
 #include "PinDefinitionsAndMore.h"
 
 // Serial Communication Definitions

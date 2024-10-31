@@ -1,11 +1,15 @@
 # IR-Transceiver-SAO
 
-Event badges get lonely too. Why not have them chat with each other?  
-A Programmable Infrared Multitool SAO. Gives a basic I2C interface to control and request or send data on IR. Takes care of basic functions such as transmission protocol, processing incoming transmission, and address checking 
+Event badges get lonely too. Why not have them chat with each other?    
+
+A Programmable Infrared Multitool SAO. Gives a basic I2C interface to control and request or send data on IR.  
+Takes care of basic functions such as transmission protocol, processing incoming transmission, and address checking.
 
 # PCB Build Instructions
-- PCB Build instructions and component data can be found at the [hackaday project site](https://hackaday.io/project/197812-infrared-communication-sao) <br/>
-- PCB Build video can be found here #TODO
+- PCB Build component selection can be found at the [hackaday project site](https://hackaday.io/project/197812-infrared-communication-sao) <br/>
+- PCB Build video can be found [here](https://www.youtube.com/watch?v=JbmtGaDhfCs&ab_channel=AlecProbst)
+  - Note: The buttons on the IR SAO must have the solder bridge soldered closed to be used
+  - Note: The top button is used as a SAO reset by default. The bottom button is unused
 
 # Installation
 1. Download this Github
@@ -15,27 +19,34 @@ A Programmable Infrared Multitool SAO. Gives a basic I2C interface to control an
 > - [This video](https://www.youtube.com/watch?v9hlY&ab_channel=Keon%27sLab) can be used as hardware connection reference from 2:42 to 8:15. Requires an Arduino Uno
 5. Build and Upload using the given platformio.ini
 
-# SAO Definitions
-- Mode Definitions
-> - Public: The IR SAO ignores the address of incoming IR transmissions. Will save any transmissions sent to it
-> - Address: The IR SAO will check the address of incoming IR transmissions. Will only save transmission with address that match it's IR address
->> - IR Address: The 0-255 value address for IR communications. Note that this is not the same as the I2C Address!
+# SAO Features
+- Public and Address Mode: Two different modes that the IR SAO can automatically sort received IR transmissions
+  - Default: Public Mode (mode = 0)
+  - Public Mode: The IR SAO ignores the address of incoming IR transmissions. Will save any data of transmissions sent to it
+  - Address Mode: The IR SAO will check the address of incoming IR transmissions. Will only save data of transmission with address that match it's IR address
+    - IR Address: The 0-255 value address for IR communications.
+    - Note: This is not the same as the I2C Address!
+    - Note: IR Addresses of received transmissions are not saved on the SAO! 
+- IR Receive Buffer: An internal buffer in the IR SAO which can save incoming transmissions. If buffer is not used, only the last transmission received is saved
+  - Default: No Buffer (enable_buffer = false)
+- IR Reflection Ignore: Prevents the receiver from saving any received transmissions with the same IR Address and Data during IR transmission time
+  - Default: Ignores Reflections (ignore_ir_reflection = true)
 
 # I2C Communication Format
-The IR SAO default I2C Address is 0x08. <br/>
+The IR SAO default I2C Address is 0x08. <br/><br/>
 Communications are made up of two parts. The first is the command and the second is the parameter(s). The Command is always sent first and the parameter(s) are sent subsequently as needed per command. Commands do not return any acknowledgement.
 * Command - uint8_t: Determines what action you would like for the IR SAO. List of commands below
 * Parameter(s) - uint8_t[]: Extra data specifiec by each command. Separated in uint8_t chunks
 
 # I2C Example Communications
 - To change the address of the IR SAO to address 8, the master should send: <br/>
-`0x02 0x08` <br/>
+`0x04 0x08` <br/>
 - To read a byte from the IR SAO, the master should send: <br/>
-`0x06` <br/>
+`0x08` <br/>
 The master would then request a byte back and be sent back a received IR byte such as: <br/>
 `0x69`
 - To send a byte of value 50 to the IR address of 230 over IR from the IR SAO, the master should send: <br/>
-`0x07 0xE6 0x32`
+`0x09 0xE6 0x32`
 
 # I2C Command API
 ## ping
@@ -102,7 +113,14 @@ The master would then request a byte back and be sent back a received IR byte su
 > Output: None<br/>
 
 # Samples
-A few samples provided to test various functions of the SAO. 
+A few samples provided to test various functions of the SAO
+- Upload_Test: A LED Blink sketch which blinks an LED on Pin_PB2 of the ATTiny85
+- I2C_Test: A I2C testing sketch which tests slave functionality on the ATTiny85
+  - Note: The I2C Host sketch can be used as the I2C Master. Intended to be used with an Arduino Uno
+- IR_Test: A IR LED and Receiver testing sketch which tests address and data sending and receiving on the IR SAO. Turns an LED on Pin_PB2 if the received IR signal has the correct address and data
+- Receiver_Signal: A IR Test sketch which uses the IRremote library to test IR sending and receiving, displaying results through serial
+- Tiny_Receiver_Button_Send: A IR Test sketch which uses the TinyIRReceiver library to test IR sending based on button input
+- Tiny_Receiver_Signal_Info: A IR Test sketch which uses the TinyIRReceiver library to test IR receiving
 
 # ATTiny85 Pinout
 ![alt text](attiny85_pinout.png)
