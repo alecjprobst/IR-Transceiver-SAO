@@ -79,7 +79,6 @@ void loop()
                 receive_buffer[number_bytes_in_receive_buffer] = ir_data;
                 number_bytes_in_receive_buffer++;
             }
-            //TODO: Maybe send an warning code or something about buffer being full?
         }
         // If not using buffer, always overwrite the first data position with new data
         else
@@ -150,7 +149,6 @@ void requestEvent()
                 send_i2c_data(receive_buffer[0]);
                 left_shift_receive_buffer();
             }
-            //TODO: Maybe send an error code or something?
             break;
         }
 
@@ -209,7 +207,6 @@ void receiveEvent(int howMany)
                 {
                     mode = new_mode;
                 }
-                //TODO: Maybe send an error code or something?
                 break;
             }
 
