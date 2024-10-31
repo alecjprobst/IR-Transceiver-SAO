@@ -22,6 +22,8 @@
 #define get_ir_receive_buffer_avaliable 7
 #define read_ir_byte 8
 #define write_ir_byte 9
+#define set_ir_write_cache 10
+#define get_ir_write_cache 11
 
 // Mode Definitions
 #define ir_public_address 0
