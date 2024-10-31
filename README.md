@@ -3,7 +3,7 @@
 Event badges get lonely too. Why not have them chat with each other?    
 
 A Programmable Infrared Multitool SAO. Gives a basic I2C interface to control and request or send data on IR.  
-Takes care of basic functions such as transmission protocol, processing incoming transmission, and address checking.
+Takes care of basic functions such as transmission protocol, processing incoming transmission, and address checking
 
 # PCB Build Instructions
 - PCB Build component selection can be found at the [hackaday project site](https://hackaday.io/project/197812-infrared-communication-sao) <br/>
@@ -32,9 +32,17 @@ Takes care of basic functions such as transmission protocol, processing incoming
 - IR Reflection Ignore: Prevents the receiver from saving any received transmissions with the same IR Address and Data during IR transmission time
   - Default: Ignores Reflections (ignore_ir_reflection = true)
 
+# IR Communication Format
+The IR SAO default IR Address is 0x00 <br/><br/>
+The IR SAO uses the NEC Transmission Protocol. We use [this](https://techdocs.altium.com/display/FPGA/NEC+Infrared+Transmission+Protocol) documentation from Altium as reference <br/>
+The NEC Transmission Protocol is made up of two main parts, the Address and the Command. The logical inverse of both the Address and Command is also sent allowing for parity checking which is done automatically in the TinyIRReceiver library <br/>
+* Address: An 8 bit value that specifies the device that should receive the transmission
+* Command: An 8 bit value that specifies data. The format of this data is unspecified, it can be anything the user desires
+* Note: The TinyIRReceiver Library also supports Extended NEC Protocol, Onkyo, and FAST but are not used in this code!
+
 # I2C Communication Format
-The IR SAO default I2C Address is 0x08. <br/><br/>
-Communications are made up of two parts. The first is the command and the second is the parameter(s). The Command is always sent first and the parameter(s) are sent subsequently as needed per command. Commands do not return any acknowledgement.
+The IR SAO default I2C Address is 0x08 <br/><br/>
+Communications are made up of two parts. The first is the command and the second is the parameter(s). The Command is always sent first and the parameter(s) are sent subsequently as needed per command. Commands do not return any acknowledgement
 * Command - uint8_t: Determines what action you would like for the IR SAO. List of commands below
 * Parameter(s) - uint8_t[]: Extra data specifiec by each command. Separated in uint8_t chunks
 
