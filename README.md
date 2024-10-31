@@ -9,7 +9,7 @@ Takes care of basic functions such as transmission protocol, processing incoming
 - PCB Build component selection can be found at the [hackaday project site](https://hackaday.io/project/197812-infrared-communication-sao) <br/>
 - PCB Build video can be found [here](https://www.youtube.com/watch?v=JbmtGaDhfCs&ab_channel=AlecProbst)
   - Note: The buttons on the IR SAO must have the solder bridge soldered closed to be used
-  - Note: The top button is used as a SAO reset by default. The bottom button is unused
+  - Note: The bottom button is used as a SAO reset by default. The top button is used for trigger a send of write buffer.
 
 # Installation
 1. Download this Github
