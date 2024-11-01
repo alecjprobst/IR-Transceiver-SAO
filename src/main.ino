@@ -15,22 +15,22 @@ uint8_t mode = 0;
 bool enable_buffer = false;
 
 bool ignore_ir_reflection = true;
-uint8_t last_sent_ir_command = 0;
-uint8_t last_sent_ir_data = 0;
-unsigned long last_time_ir_data_sent = 0;
+volatile uint8_t last_sent_ir_command = 0;
+volatile uint8_t last_sent_ir_data = 0;
+volatile unsigned long last_time_ir_data_sent = 0;
 const uint8_t max_ir_transmission_time = 70;
 
 uint8_t address_of_this_sao = 0;
 
 // Read Buffer
-const uint8_t receive_buffer_size = 255;
+const uint8_t receive_buffer_size = 128;
 uint8_t receive_buffer[receive_buffer_size];
 volatile uint8_t number_bytes_in_receive_buffer = 0;
 
 // Writer Buffer
 //      Why is the Write Buffer so small? 
 //      Because we ran out of memory of course. :D 
-const uint8_t write_buffer_size = 64;
+const uint8_t write_buffer_size = 32;
 uint8_t write_buffer_address = 0;
 uint8_t write_buffer[write_buffer_size];
 volatile uint8_t number_bytes_in_write_buffer = 0;
@@ -121,6 +121,7 @@ void loop()
             for(int i = 0; i < number_bytes_in_write_buffer; i++)
             {
                 sendNEC(IR_SEND_PIN, write_buffer_address, write_buffer[i]);
+                delay(10);
             }
         }
         

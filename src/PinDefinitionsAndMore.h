@@ -12,22 +12,22 @@
 #define LED_PIN PIN_PB2
 
 // I2C Command Definitions
-#define ping 0
+#define ping 0 // Validated - dsp
 #define set_ignore_ir_reflection 1
 #define set_ir_mode 2
-#define enable_ir_receiver_buffer 3
-#define set_ir_address 4
-#define get_ir_address 5
-#define clear_ir_receive_buffer 6
-#define get_ir_receive_buffer_avaliable 7
-#define read_ir_byte 8
-#define write_ir_byte 9
-#define write_to_ir_write_buffer 10
-#define get_ir_write_buffer 11
-#define get_ir_write_buffer_avaliable 12
-#define clear_ir_write_buffer 13
-#define set_ir_write_buffer_address 14
-#define get_ir_write_buffer_address 15
+#define enable_ir_receiver_buffer 3 // Validated - dsp
+#define set_ir_address 4 // Validated - dsp
+#define get_ir_address 5 // Validated - dsp
+#define clear_ir_receive_buffer 6 // Validated - dsp
+#define get_ir_receive_buffer_avaliable 7 // Validated - dsp
+#define read_ir_byte 8 
+#define write_ir_byte 9 // Validated - dsp
+#define write_to_ir_write_buffer 10 // Validated - dsp
+#define get_ir_write_buffer 11 // Validated - dsp
+#define get_ir_write_buffer_avaliable 12 // Validated - dsp
+#define clear_ir_write_buffer 13 // Validated - dsp
+#define set_ir_write_buffer_address 14 // Validated - dsp
+#define get_ir_write_buffer_address 15 // Validated - dsp
 
 // Mode Definitions
 #define ir_public_address 0
