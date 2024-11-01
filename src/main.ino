@@ -25,18 +25,20 @@ uint8_t address_of_this_sao = 0;
 // Read Buffer
 const uint8_t receive_buffer_size = 255;
 uint8_t receive_buffer[receive_buffer_size];
-uint8_t number_bytes_in_receive_buffer = 0;
+volatile uint8_t number_bytes_in_receive_buffer = 0;
 
 // Writer Buffer
 //      Why is the Write Buffer so small? 
 //      Because we ran out of memory of course. :D 
-const uint8_t write_buffer_size = 124;
+const uint8_t write_buffer_size = 64;
 uint8_t write_buffer_address = 0;
 uint8_t write_buffer[write_buffer_size];
-uint8_t number_bytes_in_write_buffer = 0;
+volatile uint8_t number_bytes_in_write_buffer = 0;
 
 
 uint8_t latest_i2c_received_command = 0;
+
+const char message[] PROGMEM = "pong";  // Store "pong" in flash
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // Setup
@@ -112,6 +114,7 @@ void loop()
         }
     }
 
+    
     if (digitalRead(BUTTON_PIN_1) == LOW) {
         if(number_bytes_in_write_buffer > 0)
         {
@@ -153,7 +156,9 @@ void requestEvent()
         // Debug command to sanity check
         case ping:
         {
-            Wire.write("pong");
+            char buffer[5];
+            strcpy_P(buffer, message);
+            Wire.write(buffer);
             break;
         }
 
@@ -230,7 +235,6 @@ void receiveEvent(int howMany)
             case ping:
             {
                 // Do nothing here as data will be sent out in requestEvent()
-                Wire.write("pong");
                 break;
             }
 
@@ -325,10 +329,12 @@ void receiveEvent(int howMany)
 
             case write_to_ir_write_buffer:
             {
+                uint8_t data_byte = receive_i2c_data();
+
                 // Must check to not overflow buffer
                 if(number_bytes_in_write_buffer < write_buffer_size)
                 {
-                    write_buffer[number_bytes_in_write_buffer] = receive_i2c_data();
+                    write_buffer[number_bytes_in_write_buffer] = data_byte;
                     number_bytes_in_write_buffer++;
                 }
                 break;
@@ -375,7 +381,7 @@ void receiveEvent(int howMany)
 }
 
 // Clears the entire receive buffer and resets the number of bytes variable to zero
-void clear_buffer(uint8_t buffer[], uint8_t *buffer_count, uint8_t buffer_max_size)
+void clear_buffer(uint8_t buffer[], volatile uint8_t *buffer_count, uint8_t buffer_max_size)
 {
     for(int i=0; i < buffer_max_size; i++)
     {
