@@ -115,6 +115,7 @@ void loop()
         }
     }
 
+
     if (digitalRead(BUTTON_PIN_1) == LOW && !buttonPressed) {
         buttonPressed = true;
 
@@ -179,7 +180,7 @@ void requestEvent()
             break;
         }
 
-        // Send a byte from the IR Buffer. Bytes come in FIFO ordering. Buffer is left shifted with zeros
+        // Send a byte from the IR Receive Buffer and send over I2C. Bytes come in FIFO ordering. Buffer is left shifted with zeros
         case read_ir_byte:
         {
             if(number_bytes_in_receive_buffer > 0)
@@ -190,6 +191,7 @@ void requestEvent()
             break;
         }
 
+        // Get all bytes from the IR Write Buffer and send over I2C. Bytes come in FIFO ordering
         case get_ir_write_buffer:
         {
             if(number_bytes_in_write_buffer > 0)
@@ -202,12 +204,14 @@ void requestEvent()
             break;
         }
 
+       // Get the number of bytes in the IR Write Buffer and send over I2C
         case get_ir_write_buffer_avaliable:
         {
             send_i2c_data(number_bytes_in_write_buffer);
             break;
         }
 
+        // Get the IR Write Address and send over I2C
         case get_ir_write_buffer_address:
         {
             send_i2c_data(write_buffer_address);
