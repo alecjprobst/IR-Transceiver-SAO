@@ -12,7 +12,7 @@ Takes care of basic functions such as transmission protocol, processing incoming
   - Note: The bottom button is used as a SAO reset by default. The top button is used for trigger a send of write buffer.
  
 # Drivers
-MicroPython Driver: https://github.com/DmitryPustovit/MicroPython-IR-Transceiver-SAO/tree/main  
+MicroPython Driver: https://github.com/DmitryPustovit/MicroPython-IR-Transceiver-SAO 
 
 # Installation
 1. Download this Github
