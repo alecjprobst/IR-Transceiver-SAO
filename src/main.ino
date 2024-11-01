@@ -22,11 +22,18 @@ const uint8_t max_ir_transmission_time = 70;
 
 uint8_t address_of_this_sao = 0;
 
+// Read Buffer
 const uint8_t receive_buffer_size = 255;
 uint8_t receive_buffer[receive_buffer_size];
-uint8_t write_cache_address = 0;
-uint8_t write_cache = 0;
 uint8_t number_bytes_in_receive_buffer = 0;
+
+// Writer Buffer
+const uint8_t write_buffer_size = 255;
+uint8_t write_buffer_address = 0;
+uint8_t write_buffer[receive_buffer_size];
+uint8_t number_bytes_in_write_buffer = 0;
+
+
 uint8_t latest_i2c_received_command = 0;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -40,7 +47,22 @@ void setup()
     pinMode(BUTTON_PIN_1, INPUT_PULLUP);  
 
     // Clear buffer to make sure we don't have bad data
-    clear_receive_buffer();
+    clear_buffer(receive_buffer, &number_bytes_in_receive_buffer, receive_buffer_size);
+    clear_buffer(write_buffer, &number_bytes_in_write_buffer, write_buffer_size);
+
+    // HACKADAY_Supercon_8
+    write_buffer[0] = 'S';
+    write_buffer[1] = 'U';
+    write_buffer[2] = 'P';
+    write_buffer[3] = 'E';
+    write_buffer[4] = 'R';
+    write_buffer[5] = 'C';
+    write_buffer[6] = 'O';
+    write_buffer[7] = 'N';
+    write_buffer[8] = '_';
+    write_buffer[9] = '8';
+    number_bytes_in_write_buffer = 10;
+
     // Begin I2C transactions
     Wire.begin(0x08);
     Wire.onReceive(receiveEvent);
@@ -89,7 +111,13 @@ void loop()
     }
 
     if (digitalRead(BUTTON_PIN_1) == LOW) {
-        sendNEC(IR_SEND_PIN, write_cache_address, write_cache);
+        if(number_bytes_in_write_buffer > 0)
+        {
+            for(int i = 0; i < number_bytes_in_write_buffer; i++)
+            {
+                sendNEC(IR_SEND_PIN, write_buffer_address, write_buffer[i]);
+            }
+        }
         
         while (digitalRead(BUTTON_PIN_1) == LOW) {
             delay(50);  // Debouncing delay
@@ -152,10 +180,27 @@ void requestEvent()
             break;
         }
 
-        case get_ir_write_cache:
+        case get_ir_write_buffer:
         {
-            send_i2c_data(write_cache_address);
-            send_i2c_data(write_cache);
+            if(number_bytes_in_write_buffer > 0)
+            {
+                for(int i = 0; i < number_bytes_in_write_buffer; i++)
+                {
+                    send_i2c_data(write_buffer[i]);
+                }
+            }
+            break;
+        }
+
+        case get_ir_write_buffer_avaliable:
+        {
+            send_i2c_data(number_bytes_in_write_buffer);
+            break;
+        }
+
+        case get_ir_write_buffer_address:
+        {
+            send_i2c_data(write_buffer_address);
             break;
         }
 
@@ -183,7 +228,7 @@ void receiveEvent(int howMany)
             case ping:
             {
                 // Do nothing here as data will be sent out in requestEvent()
-                //Wire.write("pong");
+                Wire.write("pong");
                 break;
             }
 
@@ -211,7 +256,7 @@ void receiveEvent(int howMany)
             }
 
             // Enables or disables the ability to buffer IR data on the ATTINY85. Note: clears the receive buffer when this is changed
-            case enable_ir_buffer:
+            case enable_ir_receiver_buffer:
             {
                 uint8_t new_enable_buffer = receive_i2c_data();
                 if(new_enable_buffer == 0)
@@ -220,7 +265,7 @@ void receiveEvent(int howMany)
                     enable_buffer = true;
                 else
                     break;
-                clear_receive_buffer();
+                clear_buffer(receive_buffer, &number_bytes_in_receive_buffer, receive_buffer_size);
                 break;
             }
 
@@ -241,7 +286,7 @@ void receiveEvent(int howMany)
             // Clears the IR Receive Buffer
             case clear_ir_receive_buffer:
             {
-                clear_receive_buffer();
+                clear_buffer(receive_buffer, &number_bytes_in_receive_buffer, receive_buffer_size);
                 break;
             }
 
@@ -276,14 +321,43 @@ void receiveEvent(int howMany)
                 break;
             }
 
-            case set_ir_write_cache:
+            case write_to_ir_write_buffer:
             {
-                write_cache_address = receive_i2c_data();
-                write_cache = receive_i2c_data();
+                // Must check to not overflow buffer
+                if(number_bytes_in_write_buffer < write_buffer_size)
+                {
+                    write_buffer[number_bytes_in_write_buffer] = receive_i2c_data();
+                    number_bytes_in_write_buffer++;
+                }
                 break;
             }
 
-            case get_ir_write_cache:
+            case get_ir_write_buffer:
+            {
+                // Do nothing here as data will be sent out in requestEvent()
+                break;
+            }
+
+            case get_ir_write_buffer_avaliable:
+            {
+                // Do nothing here as data will be sent out in requestEvent()
+                break;
+            }
+
+            // Clears the IR Receive Buffer
+            case clear_ir_write_buffer:
+            {
+                clear_buffer(write_buffer, &number_bytes_in_write_buffer, write_buffer_size);
+                break;
+            }
+
+            case set_ir_write_buffer_address:
+            {
+                write_buffer_address = receive_i2c_data();
+                break;
+            }
+
+            case get_ir_write_buffer_address:
             {
                 // Do nothing here as data will be sent out in requestEvent()
                 break;
@@ -299,13 +373,13 @@ void receiveEvent(int howMany)
 }
 
 // Clears the entire receive buffer and resets the number of bytes variable to zero
-void clear_receive_buffer()
+void clear_buffer(uint8_t buffer[], uint8_t *buffer_count, uint8_t buffer_max_size)
 {
-    for(int i=0; i < receive_buffer_size; i++)
+    for(int i=0; i < buffer_max_size; i++)
     {
-        receive_buffer[i] = 0;
+        buffer[i] = 0;
     }
-    number_bytes_in_receive_buffer = 0;
+    *buffer_count = 0;
 }
 
 // Shifts all values in the receive buffer to the left by one position. Zeros out the last position moved in the buffer
