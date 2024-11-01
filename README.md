@@ -29,6 +29,7 @@ Takes care of basic functions such as transmission protocol, processing incoming
     - Note: IR Addresses of received transmissions are not saved on the SAO! 
 - IR Receive Buffer: An internal buffer in the IR SAO which can save incoming transmissions. If buffer is not used, only the last transmission received is saved
   - Default: No Buffer (enable_buffer = false)
+  - Note: Buffer is 256 Bytes long. Any data received after the buffer is filled is ignored
 - IR Reflection Ignore: Prevents the receiver from saving any received transmissions with the same IR Address and Data during IR transmission time
   - Default: Ignores Reflections (ignore_ir_reflection = true)
 
