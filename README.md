@@ -32,7 +32,7 @@ MicroPython Driver: https://github.com/DmitryPustovit/MicroPython-IR-Transceiver
     - Note: IR Addresses of received transmissions are not saved on the SAO! 
 - IR Receive Buffer: An internal buffer in the IR SAO which can save incoming transmissions. If buffer is not used, only the last transmission received is saved
   - Default: No Buffer (enable_buffer = false)
-  - Note: Buffer is 256 Bytes long. Any data received after the buffer is filled is ignored
+  - Note: Buffer is 128 Bytes long. Any data received after the buffer is filled is ignored
 - IR Reflection Ignore: Prevents the receiver from saving any received transmissions with the same IR Address and Data during IR transmission time
   - Default: Ignores Reflections (ignore_ir_reflection = true)
 
@@ -123,6 +123,13 @@ The master would then request a byte back and be sent back a received IR byte su
 > Command Value: 0x09<br/>
 > Parameters: Two uint8_t values between 0 and 255. The first value represents the IR address and the second represents data that will be transmitted<br/>
 > Output: None<br/>
+
+## write_to_ir_write_buffer
+> Description: Write a byte to the write buffer that can be trigger send over IR. The first received i2c byte is the address and the second is the data<br/>
+> Command Value: 0x10<br/>
+> Parameters: Two uint8_t values between 0 and 255. The first value represents the IR address and the second represents data that will be transmitted<br/>
+> Output: None<br/>
+> Note: Write buffer will stay populated until clear command is called. Default size of the buffer is 16 bytes. 
 
 # Samples
 A few samples provided to test various functions of the SAO
