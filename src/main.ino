@@ -28,9 +28,11 @@ uint8_t receive_buffer[receive_buffer_size];
 uint8_t number_bytes_in_receive_buffer = 0;
 
 // Writer Buffer
-const uint8_t write_buffer_size = 255;
+//      Why is the Write Buffer so small? 
+//      Because we ran out of memory of course. :D 
+const uint8_t write_buffer_size = 124;
 uint8_t write_buffer_address = 0;
-uint8_t write_buffer[receive_buffer_size];
+uint8_t write_buffer[write_buffer_size];
 uint8_t number_bytes_in_write_buffer = 0;
 
 
