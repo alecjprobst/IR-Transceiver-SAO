@@ -39,6 +39,7 @@ volatile uint8_t number_bytes_in_write_buffer = 0;
 uint8_t latest_i2c_received_command = 0;
 
 const char message[] PROGMEM = "pong";  // Store "pong" in flash
+bool buttonPressed = false;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // Setup
@@ -114,8 +115,9 @@ void loop()
         }
     }
 
-    
-    if (digitalRead(BUTTON_PIN_1) == LOW) {
+    if (digitalRead(BUTTON_PIN_1) == LOW && !buttonPressed) {
+        buttonPressed = true;
+
         if(number_bytes_in_write_buffer > 0)
         {
             for(int i = 0; i < number_bytes_in_write_buffer; i++)
@@ -124,10 +126,10 @@ void loop()
                 delay(10);
             }
         }
-        
-        while (digitalRead(BUTTON_PIN_1) == LOW) {
-            delay(50);  // Debouncing delay
-        }
+    }
+
+    if (digitalRead(BUTTON_PIN_1) == HIGH) {
+        buttonPressed = false;
     }
 }
 
