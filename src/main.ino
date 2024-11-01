@@ -15,26 +15,31 @@ uint8_t mode = 0;
 bool enable_buffer = false;
 
 bool ignore_ir_reflection = true;
-uint8_t last_sent_ir_command = 0;
-uint8_t last_sent_ir_data = 0;
-unsigned long last_time_ir_data_sent = 0;
+volatile uint8_t last_sent_ir_command = 0;
+volatile uint8_t last_sent_ir_data = 0;
+volatile unsigned long last_time_ir_data_sent = 0;
 const uint8_t max_ir_transmission_time = 70;
 
 uint8_t address_of_this_sao = 0;
 
 // Read Buffer
-const uint8_t receive_buffer_size = 255;
+const uint8_t receive_buffer_size = 128;
 uint8_t receive_buffer[receive_buffer_size];
-uint8_t number_bytes_in_receive_buffer = 0;
+volatile uint8_t number_bytes_in_receive_buffer = 0;
 
 // Writer Buffer
-const uint8_t write_buffer_size = 255;
+//      Why is the Write Buffer so small? 
+//      Because we ran out of memory of course. :D 
+const uint8_t write_buffer_size = 32;
 uint8_t write_buffer_address = 0;
-uint8_t write_buffer[receive_buffer_size];
-uint8_t number_bytes_in_write_buffer = 0;
+uint8_t write_buffer[write_buffer_size];
+volatile uint8_t number_bytes_in_write_buffer = 0;
 
 
 uint8_t latest_i2c_received_command = 0;
+
+const char message[] PROGMEM = "pong";  // Store "pong" in flash
+bool buttonPressed = false;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // Setup
@@ -110,21 +115,22 @@ void loop()
         }
     }
 
-    // Check for button input. If Button is pressed (pulled to ground), send all data in the IR Write Buffer
-    if (digitalRead(BUTTON_PIN_1) == LOW) 
-    {
+
+    if (digitalRead(BUTTON_PIN_1) == LOW && !buttonPressed) {
+        buttonPressed = true;
+
         if(number_bytes_in_write_buffer > 0)
         {
             for(int i = 0; i < number_bytes_in_write_buffer; i++)
             {
                 sendNEC(IR_SEND_PIN, write_buffer_address, write_buffer[i]);
+                delay(10);
             }
         }
-        
-        while (digitalRead(BUTTON_PIN_1) == LOW) 
-        {
-            delay(50);  // Debouncing delay
-        }
+    }
+
+    if (digitalRead(BUTTON_PIN_1) == HIGH) {
+        buttonPressed = false;
     }
 }
 
@@ -154,7 +160,9 @@ void requestEvent()
         // Debug command to sanity check
         case ping:
         {
-            Wire.write("pong");
+            char buffer[5];
+            strcpy_P(buffer, message);
+            Wire.write(buffer);
             break;
         }
 
@@ -234,7 +242,6 @@ void receiveEvent(int howMany)
             case ping:
             {
                 // Do nothing here as data will be sent out in requestEvent()
-                Wire.write("pong");
                 break;
             }
 
@@ -329,10 +336,12 @@ void receiveEvent(int howMany)
 
             case write_to_ir_write_buffer:
             {
+                uint8_t data_byte = receive_i2c_data();
+
                 // Must check to not overflow buffer
                 if(number_bytes_in_write_buffer < write_buffer_size)
                 {
-                    write_buffer[number_bytes_in_write_buffer] = receive_i2c_data();
+                    write_buffer[number_bytes_in_write_buffer] = data_byte;
                     number_bytes_in_write_buffer++;
                 }
                 break;
@@ -379,7 +388,7 @@ void receiveEvent(int howMany)
 }
 
 // Clears the entire receive buffer and resets the number of bytes variable to zero
-void clear_buffer(uint8_t buffer[], uint8_t *buffer_count, uint8_t buffer_max_size)
+void clear_buffer(uint8_t buffer[], volatile uint8_t *buffer_count, uint8_t buffer_max_size)
 {
     for(int i=0; i < buffer_max_size; i++)
     {
