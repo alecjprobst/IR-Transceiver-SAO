@@ -115,7 +115,7 @@ void loop()
         }
     }
 
-
+    /*
     if (digitalRead(BUTTON_PIN_1) == LOW && !buttonPressed) {
         buttonPressed = true;
 
@@ -132,6 +132,7 @@ void loop()
     if (digitalRead(BUTTON_PIN_1) == HIGH) {
         buttonPressed = false;
     }
+    */
 }
 
 // Get polarized data from IR and return non-inverted value
