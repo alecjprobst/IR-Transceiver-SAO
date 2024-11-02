@@ -13,7 +13,8 @@ Takes care of basic functions such as transmission protocol, processing incoming
 - [General Project Info](https://hackaday.io/project/197812-infrared-communication-sao) <br/>
  
 # Drivers
-Want to control the IR SAO with a Hackaday badge? Install our driver instead of implementing the I2C commands yourself! <br/><br/>
+Want to control the IR SAO with a Hackaday badge?  
+Use our driver instead of implementing the I2C commands yourself!  
 MicroPython Driver: https://github.com/DmitryPustovit/MicroPython-IR-Transceiver-SAO 
 
 # Installation
