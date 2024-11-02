@@ -6,12 +6,14 @@ A Programmable Infrared Multitool SAO. Gives a basic I2C interface to control an
 Takes care of basic functions such as transmission protocol, processing incoming transmission, and address checking
 
 # PCB Build Instructions
-- PCB Build component selection can be found at the [hackaday project site](https://hackaday.io/project/197812-infrared-communication-sao) <br/>
-- PCB Build video can be found [here](https://www.youtube.com/watch?v=JbmtGaDhfCs&ab_channel=AlecProbst)
+- [PCB Build Video](https://www.youtube.com/watch?v=JbmtGaDhfCs&ab_channel=AlecProbst)
   - Note: The buttons on the IR SAO must have the solder bridge soldered closed to be used
-  - Note: The bottom button is used as a SAO reset by default. The top button is used for trigger a send of write buffer.
+    - Warning: Do not solder the solder bridge pads on the bottom of the PCB (QR Code Side) unless you don't have those resistors. Can cause instability issues!
+  - Note: The bottom button (next to the ATTiny85) is used as a SAO reset by default. The top button (next to the IR LED/Receiver) is used to trigger a send of the write buffer
+- [General Project Info](https://hackaday.io/project/197812-infrared-communication-sao) <br/>
  
 # Drivers
+Want to control the IR SAO with a Hackaday badge? Install our driver instead of implementing the I2C commands yourself! <br/><br/>
 MicroPython Driver: https://github.com/DmitryPustovit/MicroPython-IR-Transceiver-SAO 
 
 # Installation
@@ -30,9 +32,12 @@ MicroPython Driver: https://github.com/DmitryPustovit/MicroPython-IR-Transceiver
     - IR Address: The 0-255 value address for IR communications.
     - Note: This is not the same as the I2C Address!
     - Note: IR Addresses of received transmissions are not saved on the SAO! 
-- IR Receive Buffer: An internal buffer in the IR SAO which can save incoming transmissions. If buffer is not used, only the last transmission received is saved
-  - Default: No Buffer (enable_buffer = false)
-  - Note: Buffer is 128 Bytes long. Any data received after the buffer is filled is ignored
+- IR Receive Buffer: An internal buffer in the IR SAO which can save incoming IR transmissions. This buffer is optional, if the buffer is not used, only the last transmission received is saved
+  - Default: No IR Receive Buffer (enable_buffer = false)
+  - Note: Buffer is 128 Bytes long. Any data received over IR after the buffer is filled is ignored
+- IR Transmit Buffer: An internal buffer in the IR SAO which can save IR transmissions to be sent. This buffer is meant to be used to send IR data on button press
+  - Warning: This buffer ONLY sends out IR data when the button is pressed. write_ir_byte bypasses this buffer entirely
+  - Note: Buffer is 128 Bytes long. Any data sent over I2C after the buffer is filled is ignored
 - IR Reflection Ignore: Prevents the receiver from saving any received transmissions with the same IR Address and Data during IR transmission time
   - Default: Ignores Reflections (ignore_ir_reflection = true)
 
