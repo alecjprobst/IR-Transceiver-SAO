@@ -9,6 +9,9 @@
 #include <Wire.h>
 #include <Arduino.h>
 
+// Version
+uint8_t version = 1;
+
 // Program Variables
 uint8_t mode = 0;
 
@@ -216,6 +219,13 @@ void requestEvent()
         case get_ir_write_buffer_address:
         {
             send_i2c_data(write_buffer_address);
+            break;
+        }
+
+        case get_version:
+        {
+            
+            send_i2c_data(version);
             break;
         }
 

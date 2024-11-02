@@ -28,6 +28,7 @@
 #define clear_ir_write_buffer 13 // Validated - dsp
 #define set_ir_write_buffer_address 14 // Validated - dsp
 #define get_ir_write_buffer_address 15 // Validated - dsp
+#define get_version 16
 
 // Mode Definitions
 #define ir_public_address 0
