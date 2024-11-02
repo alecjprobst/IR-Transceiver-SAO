@@ -19,7 +19,7 @@ MicroPython Driver: https://github.com/DmitryPustovit/MicroPython-IR-Transceiver
 # Installation
 1. Download this Github
 2. Open Visual Studio Code with PlatformIO installed
-3. Open this project
+3. Open this project in the src/main.ino file
 4. Setup the ATTINY85 for programming
 > - [This video](https://www.youtube.com/watch?v9hlY&ab_channel=Keon%27sLab) can be used as hardware connection reference from 2:42 to 8:15. Requires an Arduino Uno
 5. Build and Upload using the given platformio.ini
