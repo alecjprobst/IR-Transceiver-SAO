@@ -9,6 +9,9 @@
 #include <Wire.h>
 #include <Arduino.h>
 
+// Version
+uint8_t version = 1;
+
 // Program Variables
 uint8_t mode = 0;
 
@@ -115,7 +118,7 @@ void loop()
         }
     }
 
-
+    /*
     if (digitalRead(BUTTON_PIN_1) == LOW && !buttonPressed) {
         buttonPressed = true;
 
@@ -132,6 +135,7 @@ void loop()
     if (digitalRead(BUTTON_PIN_1) == HIGH) {
         buttonPressed = false;
     }
+    */
 }
 
 // Get polarized data from IR and return non-inverted value
@@ -215,6 +219,13 @@ void requestEvent()
         case get_ir_write_buffer_address:
         {
             send_i2c_data(write_buffer_address);
+            break;
+        }
+
+        case get_version:
+        {
+            
+            send_i2c_data(version);
             break;
         }
 
